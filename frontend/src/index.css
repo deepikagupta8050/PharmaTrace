@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body, #root { height: 100%; }
+
+:root {
+  --bg: #121212;
+  --sidebar-bg: #181818;
+  --surface: #1E1E1E;
+  --border: #2C2C2C;
+  --text-primary: #FFFFFF;
+  --text-muted: #B0BEC5;
+  --accent: #FF6600;
+  --accent2: #FF5722;
+  --success: #00E676;
+  --row-hover: #262626;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text-primary);
+}

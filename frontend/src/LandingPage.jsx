@@ -113,9 +113,9 @@ const features = [
 ]
 
 const stats = [
-  { key: 'trials', label: 'Trials synced', value: 479, suffix: '+' },
-  { key: 'sites', label: 'Sites tracked', value: 2218, suffix: '+' },
-  { key: 'patients', label: 'Patient records', value: 5000, suffix: '+' },
+  { key: 'trials', label: 'Trials synced', value: 400, suffix: '+' },
+  { key: 'sites', label: 'Sites tracked', value: 2000, suffix: '+' },
+  { key: 'patients', label: 'Patient records', value: 3000, suffix: '+' },
   { key: 'auc', label: 'Model ROC-AUC', value: 95, suffix: '%' },
 ]
 
@@ -207,7 +207,7 @@ function LandingPage() {
                   <div className="lp-preview__row">
                     <div className="lp-preview__card">
                       <span className="lp-preview__kpi-label">Total trials</span>
-                      <span className="lp-preview__kpi-value">479</span>
+                      <span className="lp-preview__kpi-value">400</span>
                     </div>
                     <div className="lp-preview__card">
                       <span className="lp-preview__kpi-label">Avg efficacy</span>
@@ -302,7 +302,7 @@ function LandingPage() {
               A modern analytics platform for clinical trial data, built to
               surface risk, outcomes, and enrollment insights in real time.
             </p>
-            <a className="lp-footer__icon-btn" href="https://github.com/" target="_blank" rel="noreferrer" aria-label="View source on GitHub">
+            <a className="lp-footer__icon-btn" href="https://github.com/deepikagupta8050/PharmaTrace" target="_blank" rel="noreferrer" aria-label="View source on GitHub">
               {icons.github}
             </a>
           </div>

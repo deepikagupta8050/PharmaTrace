@@ -5,7 +5,7 @@ from database import engine
 
 fake = Faker()
 
-NUM_PATIENTS = 5000
+NUM_PATIENTS = 3000
 
 def get_all_ids(table_name, id_column):
     """Trials aur sites ki saari IDs nikalta hai, taaki randomly assign kar sakein"""

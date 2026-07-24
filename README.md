@@ -7,7 +7,7 @@
 ![React](https://img.shields.io/badge/React-19-blue)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-blue)
 ![Machine Learning](https://img.shields.io/badge/Machine-Learning-orange)
-![License](https://img.shields.io/badge/License-MIT-green)
+
 
 </div>
 

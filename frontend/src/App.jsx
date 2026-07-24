@@ -6,7 +6,7 @@ import {
 import axios from 'axios'
 import './App.css'
 
-const API_BASE = 'http://127.0.0.1:8000'
+const API_BASE = import.meta.env.VITE_API_URL;
 const colors = { teal: '#FF6600', slate: '#00E676', coral: '#FF5722', grid: '#26302C', text: '#8FA098' }
 const PIE_COLORS = ['#FF6600', '#00E676', '#8FA098', '#FF5722']
 const ROWS_PER_PAGE = 15

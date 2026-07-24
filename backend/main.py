@@ -14,6 +14,11 @@ import json
 import secrets
 import joblib
 from dotenv import load_dotenv
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+from reportlab.lib import colors as rl_colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 load_dotenv()
 
@@ -27,8 +32,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Catch-all handler so unexpected errors (e.g. DB connection drops) return
-# clean JSON instead of crashing the request with a raw traceback.
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     return JSONResponse(
@@ -42,7 +46,6 @@ last_sync_time = None
 def home():
     return {"message": "Clinical Trial Analytics API is running"}
 
-# ---- Summary Stats (Real-time counts) ----
 @app.get("/api/analytics/summary-stats")
 def summary_stats():
     with engine.connect() as conn:
@@ -50,7 +53,6 @@ def summary_stats():
         total_sites = conn.execute(text("SELECT COUNT(*) FROM sites")).scalar()
     return {"total_trials": total_trials, "total_sites": total_sites, "last_sync": last_sync_time}
 
-# ---- Endpoint 1: Trial Success Rate ----
 @app.get("/api/analytics/success-rate-by-condition")
 def success_rate_by_condition():
     query = text("""
@@ -70,7 +72,7 @@ def success_rate_by_condition():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 2: Ranked Trials (Window Function) ----
+
 @app.get("/api/analytics/ranked-trials")
 def ranked_trials():
     query = text("""
@@ -89,7 +91,6 @@ def ranked_trials():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 3: Demographics ----
 @app.get("/api/analytics/demographics")
 def demographics():
     query = text("""
@@ -101,7 +102,7 @@ def demographics():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 4: Trial Status Funnel ----
+
 @app.get("/api/analytics/status-funnel")
 def status_funnel():
     query = text("""
@@ -114,7 +115,7 @@ def status_funnel():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 5: Phase Distribution ----
+
 @app.get("/api/analytics/phase-distribution")
 def phase_distribution():
     query = text("""
@@ -127,7 +128,7 @@ def phase_distribution():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 6: Top Locations ----
+
 @app.get("/api/analytics/top-locations")
 def top_locations():
     query = text("""
@@ -142,7 +143,7 @@ def top_locations():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 7: Enrollment Trend ----
+
 @app.get("/api/analytics/enrollment-trend")
 def enrollment_trend():
     query = text("""
@@ -155,7 +156,7 @@ def enrollment_trend():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 8: Drug Leaderboard ----
+
 @app.get("/api/analytics/drug-leaderboard")
 def drug_leaderboard():
     query = text("""
@@ -170,7 +171,7 @@ def drug_leaderboard():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 9: Side Effect Rate ----
+
 @app.get("/api/analytics/side-effect-rate")
 def side_effect_rate():
     query = text("""
@@ -188,7 +189,7 @@ def side_effect_rate():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 10: Age Group Efficacy ----
+
 @app.get("/api/analytics/age-group-efficacy")
 def age_group_efficacy():
     query = text("""
@@ -211,7 +212,7 @@ def age_group_efficacy():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 11: Dosage vs Efficacy ----
+
 @app.get("/api/analytics/dosage-vs-efficacy")
 def dosage_vs_efficacy():
     query = text("""
@@ -224,7 +225,7 @@ def dosage_vs_efficacy():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 12: Trial Duration ----
+
 @app.get("/api/analytics/trial-duration")
 def trial_duration():
     query = text("""
@@ -238,7 +239,6 @@ def trial_duration():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Endpoint 13: Site Performance ----
 @app.get("/api/analytics/site-performance")
 def site_performance():
     query = text("""
@@ -273,8 +273,6 @@ def all_trials():
         return [dict(row._mapping) for row in result]
 
 
-    
-# ---- Endpoint: Auto-Generated Insights ----
 @app.get("/api/analytics/insights")
 def insights():
     results = []
@@ -324,7 +322,7 @@ def insights():
 
     return {"insights": results}
 
-# ---- Endpoint: Alerts (Flagged Trials) ----
+
 @app.get("/api/analytics/alerts")
 def alerts():
     query = text("""
@@ -347,7 +345,6 @@ def alerts():
         result = conn.execute(query)
         return [dict(row._mapping) for row in result]
 
-# ---- Feature 1: Trial Risk Score ----
 @app.get("/api/advisor/risk-score")
 def risk_score():
     query = text("""
@@ -377,7 +374,6 @@ def risk_score():
     rows.sort(key=lambda x: x["risk_score"], reverse=True)
     return rows[:15]
 
-# ---- Feature 2: Site Selection Advisor ----
 @app.get("/api/advisor/site-selection")
 def site_selection(condition: str = "", phase: str = ""):
     query = text("""
@@ -399,7 +395,6 @@ def site_selection(condition: str = "", phase: str = ""):
         result = conn.execute(query, {"condition": condition, "cond": f"%{condition}%", "phase": phase})
         return [dict(row._mapping) for row in result]
 
-# ---- Feature 3: Enrollment Forecasting ----
 @app.get("/api/advisor/forecast")
 def enrollment_forecast(target_patients: int = 200):
     query = text("""
@@ -426,7 +421,6 @@ def enrollment_forecast(target_patients: int = 200):
         "estimated_completion": f"~{months_needed} months at current enrollment pace"
     }
 
-# ---- Feature 4: Competitive Intelligence View ----
 @app.get("/api/advisor/competitive-landscape")
 def competitive_landscape(condition: str = "diabetes"):
     query = text("""
@@ -441,7 +435,7 @@ def competitive_landscape(condition: str = "diabetes"):
         result = conn.execute(query, {"cond": f"%{condition}%"})
         return [dict(row._mapping) for row in result]
 
-# ---- Trial Finder ----
+
 @app.get("/api/finder/match")
 def match_trials(age: int, keyword: str = ""):
     if age < 0 or age > 120:
@@ -472,7 +466,7 @@ def match_trials(age: int, keyword: str = ""):
         result = conn.execute(query, {"age_group": age_group, "keyword": keyword, "kw": f"%{keyword}%"})
         return {"age_group": age_group, "matches": [dict(row._mapping) for row in result]}
 
-# ---- Sync Latest Data ----
+
 def clean_date(d):
     if not d:
         return None
@@ -551,7 +545,7 @@ def sync_trials(condition: str = "diabetes"):
     }
 
 
-# ---- Feature: Trial Similarity Finder ----
+
 @app.get("/api/advisor/similar-trials")
 def similar_trials(trial_name: str):
     trial_name = (trial_name or "").strip()
@@ -595,7 +589,7 @@ def similar_trials(trial_name: str):
         return {"target_trial": trial_name, "target_phase": target_phase, "matches": rows[:6]}
 
 
-# ---- Feature: Anomaly Detection ----
+
 @app.get("/api/advisor/anomalies")
 def detect_anomalies():
     with engine.connect() as conn:
@@ -628,11 +622,7 @@ def detect_anomalies():
         return {"anomalies": anomalies[:8], "mean": round(mean, 2), "std_dev": round(std_dev, 2)}
 
 
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.units import inch
-from reportlab.lib import colors as rl_colors
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
 
 @app.get("/api/reports/summary-pdf")
 def generate_pdf_report(search: str = "", report_type: str = "all"):
@@ -717,10 +707,8 @@ def generate_pdf_report(search: str = "", report_type: str = "all"):
     return StreamingResponse(buffer, media_type="application/pdf",
         headers={"Content-Disposition": "attachment; filename=pharmatrace_report.pdf"})
 
-# ==================================================
-# FEATURE: Public API Key + Rate Limiting
-# ==================================================
-API_KEYS = {}  # key -> {"created": time, "requests": []}
+
+API_KEYS = {}  
 
 @app.post("/api/keys/generate")
 def generate_api_key():
@@ -748,12 +736,6 @@ def public_trials_summary(api_key: str = Depends(check_rate_limit)):
     return {"total_trials": total, "avg_efficacy": avg_eff, "requests_remaining": remaining}
 
 
-
-
-
-# ==================================================
-# FEATURE: Predictive Trial Success Model (Pre-trained)
-# ==================================================
 
 MODEL_DIR = ""
 

@@ -737,7 +737,8 @@ def public_trials_summary(api_key: str = Depends(check_rate_limit)):
 
 
 
-MODEL_DIR = ""
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_DIR = os.path.join(BASE_DIR, "models")
 
 MODEL_PATH = os.path.join(MODEL_DIR, "efficacy_model.pkl")
 GENDER_ENCODER_PATH = os.path.join(MODEL_DIR, "gender_encoder.pkl")
